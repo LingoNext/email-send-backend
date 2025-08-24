@@ -24,13 +24,18 @@
 	  $env:DB_PASSWORD = "你的密碼"
 	  ```
 	- 或將其加入系統環境變數
-4. 前往[設定應用密碼](https://support.google.com/accounts/answer/185833?hl=zh-Hant)，名稱可以自己取，並修改 `settings.py` 
-   ![設定應用密碼](assets/img/set_email_password.png)
-    ```python
-    EMAIL_HOST_USER = "chen199940@gmail.com" #改為你的信箱
-    EMAIL_HOST_PASSWORD = os.getenv('EMAIL_PASSWORD') #設定環境變數`EMAIL_PASSWORD`
-    ```
-    > 應用程式密碼是一個 16 位數密碼，輸入環境變數請移除空格!
+
+4. 前往[設定應用密碼](https://support.google.com/accounts/answer/185833?hl=zh-Hant)，名稱可以自己取，並修改 `settings.py`：
+
+	**設定應用密碼畫面**
+   
+	![設定應用密碼](assets/img/set_email_password.png)
+
+	```python
+	EMAIL_HOST_USER = "chen199940@gmail.com" #改為你的信箱
+	EMAIL_HOST_PASSWORD = os.getenv('EMAIL_PASSWORD') #設定環境變數`EMAIL_PASSWORD`
+	```
+	> 應用程式密碼是一個 16 位數密碼，輸入環境變數請移除空格!
 
 5. 進入專案資料夾並建立虛擬環境：
 	```bash
@@ -43,25 +48,45 @@
 	pip install -r requirements.txt
 	```
 
+
 ### 資料庫遷移
 ```bash
 python manage.py migrate
 ```
+
+**安裝資料表畫面**
+
 ![安裝資料表](assets/img/install_apps.png)
+
 ### 啟動伺服器
 ```bash
 python manage.py runserver 0.0.0.0:8000
 ```
+
+**運行資訊畫面**
+
 ![運行資訊](assets/img/server_information.png)
+
+---
+
 ### 完整 API 測試流程
 
-- 驗證碼發送
+#### 1. 驗證碼發送
+
 ![測試1](assets/img/test1.png)
+
 ![測試2](assets/img/test2.png)
-- 註冊
+
+#### 2. 註冊
+
 ![測試3](assets/img/test3.png)
-- 登入
+
+#### 3. 登入
+
 ![測試4](assets/img/test4.png)
-- 移除帳號
+
+#### 4. 移除帳號
+
 ![測試5](assets/img/test5.png)
+
 ![測試6](assets/img/test6.png)
