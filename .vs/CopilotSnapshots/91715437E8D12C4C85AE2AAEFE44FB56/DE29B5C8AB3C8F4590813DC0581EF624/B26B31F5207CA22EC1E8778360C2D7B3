@@ -1,0 +1,15 @@
+﻿"""
+Definition of views.
+"""
+
+from django.core.mail import send_mail
+from django.conf import settings
+
+def send_gmail_test():
+    send_mail(
+        "Django 測試 Gmail 郵件",
+        "這是一封從 Django + Gmail 發送的測試信",
+        settings.DEFAULT_FROM_EMAIL,
+        ["你的另一個信箱"],   # 收件人
+        fail_silently=False,
+    )

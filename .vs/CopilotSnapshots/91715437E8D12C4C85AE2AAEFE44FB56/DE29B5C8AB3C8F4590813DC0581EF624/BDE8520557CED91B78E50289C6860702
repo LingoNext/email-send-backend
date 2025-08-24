@@ -1,0 +1,10 @@
+﻿"""
+Definition of urls for email_send_backed.
+"""
+
+from django.urls import path
+
+
+urlpatterns = [
+
+]

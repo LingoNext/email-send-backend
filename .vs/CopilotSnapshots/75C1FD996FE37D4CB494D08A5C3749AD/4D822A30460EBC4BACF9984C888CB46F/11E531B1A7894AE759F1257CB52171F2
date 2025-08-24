@@ -1,0 +1,25 @@
+﻿from django.conf import settings
+from django.core.mail import send_mail
+from django.conf import settings
+from rest_framework.response import Response
+from rest_framework import status
+from rest_framework.decorators import api_view
+import random
+
+@api_view(['GET'])
+def send_code_email(request):
+    code = str(random.randint(100000, 999999))
+    subject = "專題程式的驗證碼"
+    message = f"您的驗證碼為: {code}，請在五分鐘內完成註冊"
+    recipient_list = ["s1411232069@ad1.nutc.edu.tw"]
+    try:
+        send_mail(
+            subject,
+            message,
+            settings.DEFAULT_FROM_EMAIL,
+            recipient_list,
+            fail_silently=False,
+        )
+        return Response({'message': '驗證碼已發送，請檢查垃圾郵件'}, status=status.HTTP_200_OK)
+    except Exception:
+        return Response({'message': '發送失敗'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

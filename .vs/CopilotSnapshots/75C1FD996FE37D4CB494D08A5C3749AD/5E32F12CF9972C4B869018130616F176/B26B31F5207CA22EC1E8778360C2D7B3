@@ -1,0 +1,68 @@
+﻿from django.conf import settings
+from django.core.mail import send_mail
+from rest_framework.response import Response
+from rest_framework import status
+from rest_framework.decorators import api_view
+import random
+from .models import VerificationCode
+from django.utils import timezone
+from django.contrib.auth import get_user_model, authenticate
+
+@api_view(['POST'])
+def send_code_email(request):
+    email = request.data.get('email')
+    if not email:
+        return Response({'message': '請提供email'}, status=status.HTTP_400_BAD_REQUEST)
+    code = str(random.randint(100000, 999999))
+    subject = "專題程式的驗證碼"
+    message = f"您的驗證碼為: {code}，請在五分鐘內完成註冊"
+    try:
+        send_mail(
+            subject,
+            message,
+            settings.DEFAULT_FROM_EMAIL,
+            [email],
+            fail_silently=False,
+        )
+        VerificationCode.objects.create(email=email, code=code)
+        return Response({'message': '驗證碼已發送，請檢查垃圾郵件'}, status=status.HTTP_200_OK)
+    except Exception:
+        return Response({'message': '發送失敗'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+@api_view(['POST'])
+def register(request):
+    email = request.data.get('email')
+    password = request.data.get('password')
+    code = request.data.get('code')
+    username = request.data.get('username')
+    if not all([email, password, code, username]):
+        return Response({'message': '請提供email、密碼、驗證碼與使用者名稱'}, status=status.HTTP_400_BAD_REQUEST)
+    # 驗證驗證碼（五分鐘內有效）
+    valid_time = timezone.now() - timezone.timedelta(minutes=5)
+    code_obj = VerificationCode.objects.filter(email=email, code=code, created_at__gte=valid_time).last()
+    if not code_obj:
+        return Response({'message': '驗證碼錯誤或已過期'}, status=status.HTTP_400_BAD_REQUEST)
+    User = get_user_model()
+    if User.objects.filter(email=email).exists():
+        return Response({'message': '此email已註冊'}, status=status.HTTP_400_BAD_REQUEST)
+    if User.objects.filter(username=username).exists():
+        return Response({'message': '此使用者名稱已被使用'}, status=status.HTTP_400_BAD_REQUEST)
+    user = User.objects.create_user(username=username, email=email, password=password)
+    return Response({'message': '註冊成功'}, status=status.HTTP_201_CREATED)
+
+@api_view(['POST'])
+def login(request):
+    email = request.data.get('email')
+    password = request.data.get('password')
+    if not all([email, password]):
+        return Response({'message': '請提供email與密碼'}, status=status.HTTP_400_BAD_REQUEST)
+    User = get_user_model()
+    try:
+        user_obj = User.objects.get(email=email)
+    except User.DoesNotExist:
+        return Response({'message': '帳號或密碼錯誤'}, status=status.HTTP_401_UNAUTHORIZED)
+    user = authenticate(request, username=user_obj.username, password=password)
+    if user is not None:
+        return Response({'message': '登入成功', 'username': user.username}, status=status.HTTP_200_OK)
+    else:
+        return Response({'message': '帳號或密碼錯誤'}, status=status.HTTP_401_UNAUTHORIZED)
