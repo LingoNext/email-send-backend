@@ -13,7 +13,7 @@
 	- [安裝方式](#安裝方式)
 		- [1. 下載專案](#1-下載專案)
 		- [2. 安裝 PostgreSQL](#2-安裝-postgresql)
-		- [3. 設定環境變數](#3-設定環境變數)
+		- [3. 設定系統環境變數](#3-設定系統環境變數)
 		- [4. 設定 Gmail 應用密碼](#4-設定-gmail-應用密碼)
 		- [5. 建立虛擬環境](#5-建立虛擬環境)
 		- [6. 安裝相依套件](#6-安裝相依套件)
@@ -59,7 +59,6 @@
 下載或 clone 此專案：
 ```bash
 git clone https://github.com/LingoNext/email-send-backend.git
-cd email-send-backend
 ```
 
 ### 2. 安裝 PostgreSQL
@@ -74,58 +73,47 @@ cd email-send-backend
   - Port 號：`5432`
 - 設定密碼，並記住此密碼（後續設定環境變數使用）
 
-### 3. 設定環境變數
+### 3. 設定系統環境變數
 
-設定資料庫密碼環境變數：
-```powershell
-# Windows PowerShell
-$env:DB_PASSWORD = "你的PostgreSQL密碼"
-```
-> **提示**: 建議將環境變數加入系統環境變數，避免每次重啟都要重新設定
+- 設定資料庫密碼環境變數：
+  - DB_PASSWORD = "你的PostgreSQL密碼"
 
 ### 4. 設定 Gmail 應用密碼
 
-1. 前往 [Google 帳戶設定應用密碼](https://support.google.com/accounts/answer/185833?hl=zh-Hant)
-2. 生成應用密碼（名稱可自訂）
+a. 前往 [Google 帳戶設定應用密碼](https://support.google.com/accounts/answer/185833?hl=zh-Hant)
+b. 生成應用密碼（名稱可自訂）
 
 **設定應用密碼畫面**
 
 ![設定應用密碼](assets/img/set_email_password.png)
 
-3. 設定郵件相關環境變數：
-```powershell
-# 設定你的 Gmail 帳號
-$env:EMAIL_HOST_USER = "your-email@gmail.com"
-# 設定應用密碼（16位數，移除空格）
-$env:EMAIL_HOST_PASSWORD = "your-app-password"
-```
+c. 設定郵件相關系統環境變數：
 
-> **重要**: 應用程式密碼是 16 位數密碼，請移除所有空格後再設定到環境變數
+- 設定 Gmail 帳號
+  - EMAIL_HOST_USER = "your-email@gmail.com"
+- 設定應用密碼（16位數，移除空格）
+  - EMAIL_HOST_PASSWORD = "your-app-password"
+
+> **重要**: 應用程式密碼是 16 位數密碼，請移除所有空格後再設定到環境變數，也需要重開專案資料夾以確保環境變數正確載入。
 
 ### 5. 建立虛擬環境
 
 建立並啟用 Python 虛擬環境：
 ```bash
-# 進入專案目錄
-cd email_send_backend
-
-# 建立虛擬環境
-python -m venv env
-
 # 啟用虛擬環境
-env\Scripts\activate
+.\venv\Scripts\Activate.ps1
 ```
 
 ### 6. 安裝相依套件
 
 安裝所需的 Python 套件：
 ```bash
+cd email_send_backend
 pip install -r requirements.txt
 ```
-
+可能需要重開專案資料夾以確保虛擬環境正確啟用。
 
 ## 資料庫設定
-
 執行資料庫遷移以建立必要的資料表：
 ```bash
 # 生成遷移文件
@@ -135,9 +123,7 @@ python manage.py makemigrations
 python manage.py migrate
 ```
 
-**資料庫安裝成功畫面**
-
-![安裝資料表](assets/img/install_apps.png)
+![建立成功畫面](assets/img/setup_success.png)
 
 ## 啟動服務
 
@@ -279,4 +265,4 @@ Authorization: Token 9944b09199c62bcf9418ad846dd0e4bbdfc6ee4b
 - [ ] `DB_PASSWORD` - PostgreSQL 密碼
 - [ ] `EMAIL_HOST_USER` - Gmail 帳號
 - [ ] `EMAIL_HOST_PASSWORD` - Gmail 應用密碼
-- [ ] `SECRET_KEY` - Django 密鑰（生產環境）
+- [ ] `SECRET_KEY` - Django 密鑰
