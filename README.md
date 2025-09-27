@@ -31,9 +31,6 @@
 		- [2. 用戶註冊測試](#2-用戶註冊測試)
 		- [3. 用戶登入測試](#3-用戶登入測試)
 		- [4. 帳號刪除測試](#4-帳號刪除測試)
-	- [注意事項](#注意事項)
-		- [安全性提醒](#安全性提醒)
-		- [環境變數檢查清單](#環境變數檢查清單)
 
 ## 技術棧
 
@@ -65,13 +62,13 @@ git clone https://github.com/LingoNext/email-send-backend.git
 
 安裝並設定 PostgreSQL 資料庫：
 - 下載並安裝 [PostgreSQL](https://www.postgresql.org/download/)
+- 設定密碼，並記住此密碼（後續設定環境變數使用）
 - 開啟 Stack Builder 並安裝附加元件
 - 開啟 pgAdmin 並建立資料庫：
   - 資料庫名稱：`email_send_db`
   - 用戶名稱：`postgres`
   - 主機名稱：`localhost`
   - Port 號：`5432`
-- 設定密碼，並記住此密碼（後續設定環境變數使用）
 
 ### 3. 設定系統環境變數
 
@@ -81,9 +78,8 @@ git clone https://github.com/LingoNext/email-send-backend.git
 ### 4. 設定 Gmail 應用密碼
 
 a. 前往 [Google 帳戶設定應用密碼](https://support.google.com/accounts/answer/185833?hl=zh-Hant)
-b. 生成應用密碼（名稱可自訂）
 
-**設定應用密碼畫面**
+b. 生成應用密碼（名稱可自訂）
 
 ![設定應用密碼](assets/img/set_email_password.png)
 
@@ -94,16 +90,18 @@ c. 設定郵件相關系統環境變數：
 - 設定應用密碼（16位數，移除空格）
   - EMAIL_HOST_PASSWORD = "your-app-password"
 
-> **重要**: 應用程式密碼是 16 位數密碼，請移除所有空格後再設定到環境變數，也需要重開專案資料夾以確保環境變數正確載入。
+> 重開專案資料夾以確保環境變數正確載入。
 
 ### 5. 建立虛擬環境
 
 建立並啟用 Python 虛擬環境：
 ```bash
+# 建立虛擬環境
+python -m venv venv
 # 啟用虛擬環境
 .\venv\Scripts\Activate.ps1
 ```
-
+看到 `(venv)` 提示符即表示虛擬環境已啟用。
 ### 6. 安裝相依套件
 
 安裝所需的 Python 套件：
@@ -111,7 +109,7 @@ c. 設定郵件相關系統環境變數：
 cd email_send_backend
 pip install -r requirements.txt
 ```
-可能需要重開專案資料夾以確保虛擬環境正確啟用。
+可能需要重開專案資料夾以確保套件正確啟用。
 
 ## 資料庫設定
 執行資料庫遷移以建立必要的資料表：
@@ -251,18 +249,3 @@ Authorization: Token 9944b09199c62bcf9418ad846dd0e4bbdfc6ee4b
 ![測試5](assets/img/test5.png)
 
 ![測試6](assets/img/test6.png)
-
-## 注意事項
-
-### 安全性提醒
-- 請勿將敏感信息（如密碼、Token）硬編碼在代碼中
-- 生產環境請使用更安全的 SECRET_KEY
-- 生產環境請關閉 DEBUG 模式
-- 請根據需求調整 ALLOWED_HOSTS
-
-### 環境變數檢查清單
-確保以下環境變數已正確設定：
-- [ ] `DB_PASSWORD` - PostgreSQL 密碼
-- [ ] `EMAIL_HOST_USER` - Gmail 帳號
-- [ ] `EMAIL_HOST_PASSWORD` - Gmail 應用密碼
-- [ ] `SECRET_KEY` - Django 密鑰
