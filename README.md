@@ -1,251 +1,56 @@
 # Email Send Backend
-
-> **警告：不要在這裡實作專題，請前往 English-Learning-Assistant-Backend ，此專案僅供學習參考用途！**
-
-這是一個基於 Django 的郵件發送後端服務，支援用戶註冊、登入、驗證碼發送等功能。
-
-## 目錄
-
-- [Email Send Backend](#email-send-backend)
-	- [目錄](#目錄)
-	- [技術棧](#技術棧)
-	- [功能特色](#功能特色)
-	- [安裝方式](#安裝方式)
-		- [1. 下載專案](#1-下載專案)
-		- [2. 安裝 PostgreSQL](#2-安裝-postgresql)
-		- [3. 設定系統環境變數](#3-設定系統環境變數)
-		- [4. 設定 Gmail 應用密碼](#4-設定-gmail-應用密碼)
-		- [5. 建立虛擬環境](#5-建立虛擬環境)
-		- [6. 安裝相依套件](#6-安裝相依套件)
-	- [資料庫設定](#資料庫設定)
-	- [啟動服務](#啟動服務)
-	- [API 文檔](#api-文檔)
-		- [基礎信息](#基礎信息)
-		- [API 端點](#api-端點)
-			- [1. 發送驗證碼](#1-發送驗證碼)
-			- [2. 用戶註冊](#2-用戶註冊)
-			- [3. 用戶登入](#3-用戶登入)
-			- [4. 刪除帳號](#4-刪除帳號)
-	- [完整測試流程](#完整測試流程)
-		- [1. 驗證碼發送測試](#1-驗證碼發送測試)
-		- [2. 用戶註冊測試](#2-用戶註冊測試)
-		- [3. 用戶登入測試](#3-用戶登入測試)
-		- [4. 帳號刪除測試](#4-帳號刪除測試)
+> 此專案僅供學習參考用途
+## 前提
+SMTP + 自己的郵件服務商容易被擋信，Gmail 直接進垃圾桶 / 直接拒信 / 封帳。
+自己買 domain(不要用免費的，幾乎都會被擋!) + API 寄信服務，使用 Resend 不是自己跑 SMTP，而是交給專業寄信服務來發送郵件。Cloudflare：負責「網域、DNS、保護、加速」；Resend：負責「寄信服務」。
 
 ## 技術棧
-
-- **後端框架**: Django 5.2.6
-- **資料庫**: PostgreSQL
-- **API 框架**: Django REST Framework
-- **郵件服務**: Gmail SMTP
-- **認證方式**: Token Authentication
-- **API 測試工具**: HOPPSCOTCH
-
-## 功能特色
-
-- 郵件驗證碼發送
-- 用戶註冊與登入
-- Token 基礎認證
-- 帳號刪除功能
-- 安全密碼驗證
-- 驗證碼過期機制（5分鐘）
+> 只做測試，無資料庫功能
+- **後端框架**: Django
+- **郵件服務**: Resend
 
 ## 安裝方式
 
-### 1. 下載專案
+### 1.下載專案
+
 下載或 clone 此專案：
+
 ```bash
 git clone https://github.com/LingoNext/email-send-backend.git
 ```
 
-### 2. 安裝 PostgreSQL
-
-安裝並設定 PostgreSQL 資料庫：
-- 下載並安裝 [PostgreSQL](https://www.postgresql.org/download/)
-- 設定密碼，並記住此密碼（後續設定環境變數使用）
-- 開啟 Stack Builder 並安裝附加元件
-- 開啟 pgAdmin 並建立資料庫：
-  - 資料庫名稱：`email_send_db`
-  - 用戶名稱：`postgres`
-  - 主機名稱：`localhost`
-  - Port 號：`5432`
-
-### 3. 設定系統環境變數
-
-- 設定資料庫密碼環境變數：
-  - DB_PASSWORD = "你的PostgreSQL密碼"
-
-### 4. 設定 Gmail 應用密碼
-
-a. 前往 [Google 帳戶設定應用密碼](https://support.google.com/accounts/answer/185833?hl=zh-Hant)
-
-b. 生成應用密碼（名稱可自訂）
-
-![設定應用密碼](assets/img/set_email_password.png)
-
-c. 設定郵件相關系統環境變數：
-
-- 設定 Gmail 帳號
-  - EMAIL_HOST_USER = "your-email@gmail.com"
-- 設定應用密碼（16位數，移除空格）
-  - EMAIL_HOST_PASSWORD = "your-app-password"
-
-> 重開專案資料夾以確保環境變數正確載入。
-
-### 5. 建立虛擬環境
+### 2.建立虛擬環境
 
 建立並啟用 Python 虛擬環境：
+
 ```bash
 # 建立虛擬環境
 python -m venv venv
 # 啟用虛擬環境
 .\venv\Scripts\Activate.ps1
 ```
+
 看到 `(venv)` 提示符即表示虛擬環境已啟用。
-### 6. 安裝相依套件
+
+### 3.安裝相依套件
 
 安裝所需的 Python 套件：
+
 ```bash
 cd email_send_backend
 pip install -r requirements.txt
 ```
-可能需要重開專案資料夾以確保套件正確啟用。
 
-## 資料庫設定
-執行資料庫遷移以建立必要的資料表：
-```bash
-# 生成遷移文件
-python manage.py makemigrations
+### 4.設定環境變數
 
-# 執行遷移
-python manage.py migrate
-```
+- SECRET_KEY: Django 專案的密鑰，可自訂
+- SEND_EMAIL_API_KEY: 從 [resend](https://resend.com/) 申請 API Key
 
-![建立成功畫面](assets/img/setup_success.png)
-
-## 啟動服務
+### 5.啟動服務
 
 啟動 Django 開發服務器：
 ```bash
 python manage.py runserver 0.0.0.0:8000
 ```
 
-**服務啟動成功畫面**
-
-![運行資訊](assets/img/server_information.png)
-
-## API 文檔
-
-### 基礎信息
-- **Base URL**: `http://localhost:8000/api/`
-- **認證方式**: Token Authentication
-- **內容類型**: `application/json`
-
-### API 端點
-
-| 端點 | 方法 | 描述 | 認證 |
-|------|------|------|------|
-| `/api/send_code_email/` | POST | 發送驗證碼到郵箱 | 無 |
-| `/api/register/` | POST | 用戶註冊 | 無 |
-| `/api/login/` | POST | 用戶登入 | 無 |
-| `/api/delete_account/` | POST | 刪除帳號 | 需要 |
-
-#### 1. 發送驗證碼
-```http
-POST /api/send_code_email/
-Content-Type: application/json
-
-{
-  "email": "user@example.com"
-}
-```
-
-**回應**:
-```json
-{
-  "message": "驗證碼已發送，請檢查垃圾郵件"
-}
-```
-
-#### 2. 用戶註冊
-```http
-POST /api/register/
-Content-Type: application/json
-
-{
-  "email": "user@example.com",
-  "username": "testuser",
-  "password": "securepassword123",
-  "code": "123456"
-}
-```
-
-**回應**:
-```json
-{
-  "message": "註冊成功"
-}
-```
-
-#### 3. 用戶登入
-```http
-POST /api/login/
-Content-Type: application/json
-
-{
-  "email": "user@example.com",
-  "password": "securepassword123"
-}
-```
-
-**回應**:
-```json
-{
-  "message": "登入成功",
-  "username": "testuser",
-  "token": "9944b09199c62bcf9418ad846dd0e4bbdfc6ee4b"
-}
-```
-
-#### 4. 刪除帳號
-```http
-POST /api/delete_account/
-Content-Type: application/json
-Authorization: Token 9944b09199c62bcf9418ad846dd0e4bbdfc6ee4b
-
-{
-  "email": "user@example.com",
-  "password": "securepassword123"
-}
-```
-
-**回應**:
-```json
-{
-  "message": "帳號已刪除"
-}
-```
-
-## 完整測試流程
-
-使用 HOPPSCOTCH 或其他 API 測試工具進行測試：
-
-### 1. 驗證碼發送測試
-
-![測試1](assets/img/test1.png)
-
-![測試2](assets/img/test2.png)
-
-### 2. 用戶註冊測試
-
-![測試3](assets/img/test3.png)
-
-### 3. 用戶登入測試
-
-![測試4](assets/img/test4.png)
-
-### 4. 帳號刪除測試
-
-![測試5](assets/img/test5.png)
-
-![測試6](assets/img/test6.png)
+![img](assets/img/outlook.jpg)
