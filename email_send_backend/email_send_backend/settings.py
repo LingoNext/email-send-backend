@@ -23,7 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv("SECRET_KEY", "django-insecure-!#9+mjbru(33r1-b_)d(60pgp$+*-^)$2ngyylemayel5%a9n+")
 
 # Mail settings
-FROM_EMAIL = "Toni <no-reply@mail.tonixiang.me>"
+FROM_EMAIL = "ELA <support@mail.tonixiang.me>"
 SEND_EMAIL_API_KEY = os.getenv("SEND_EMAIL_API_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
@@ -41,9 +41,12 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'corsheaders',
+    'rest_framework',
+    'myapp',
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -51,7 +54,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
 ]
 
 ROOT_URLCONF = 'email_send_backend.urls'
@@ -72,6 +74,28 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'email_send_backend.wsgi.application'
+
+# Database
+# https://docs.djangoproject.com/en/5.2/ref/settings/#databases
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
+}
+
+CORS_ALLOW_CREDENTIALS = True
+
+# REST Framework settings
+REST_FRAMEWORK = {
+    'DEFAULT_RENDERER_CLASSES': [
+        'rest_framework.renderers.JSONRenderer',
+    ],
+    'DEFAULT_PARSER_CLASSES': [
+        'rest_framework.parsers.JSONParser',
+    ],
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
