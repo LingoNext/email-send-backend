@@ -3,7 +3,7 @@
 > 此專案僅供學習參考用途，只做測試，無資料庫功能
 
 Gmail SMTP 作為發驗證碼，因為模板化、高重複，可能直接進垃圾桶、直接拒信，甚至被封帳。改善方法是：
-自己買 Domain，交給 Resend (專業寄信服務)來發送郵件
+自己買 Domain，交給 Resend (專業寄信服務)來發送郵件。
 
 ## 實際信件流向
 
@@ -57,4 +57,12 @@ pip install -r requirements.txt
 python manage.py runserver 0.0.0.0:8000
 ```
 
-![img](assets/img/outlook.png)
+## API 端點
+
+- `POST /api/send_verification_code/`: 發送驗證碼
+
+![img](assets/img/test.png)
+
+## 測試郵件
+
+![img](assets/img/email.png)
